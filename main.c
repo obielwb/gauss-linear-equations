@@ -1,6 +1,10 @@
 #include<stdio.h>
 #include<string.h>
 
+#define MAX 500
+
+int *matrices[MAX];
+
 int main(int argc, char* argv[]) {
 	if (argc > 2) {
 		printf("Too many arguments supplied.");
@@ -28,8 +32,26 @@ int main(int argc, char* argv[]) {
 			else {
 				char c;
 
+				int matrix_rows = 0;
+				int row[3] = {};
+				int cnt = -1;
+				int qtd_added_rows = 0;
+
 				while ((c = fgetc(input_file)) != EOF) {
-					printf("%c", c);
+					int value = (int)c;
+
+					if (matrix_rows > 0) {
+						if (cnt < 3) 
+							row[++cnt] = (int)c;
+						else {
+							qtd_added_rows++;
+
+							if (qtd_added_rows == matrix_rows) {
+								// reset matrix rows size to read the next
+								matrix_rows = 0;
+							}
+						}
+					}
 				}
 				fclose(input_file);
 			}
@@ -41,4 +63,8 @@ int main(int argc, char* argv[]) {
 }
 
 
-// method - make method to store equation in array
+
+void solve_equation(int *matrix, int num_of_rows) { }
+
+// https://stackoverflow.com/questions/10874374/passing-a-unknown-size-matrix-reference-to-a-c-function
+// https://www.tutorialspoint.com/cprogramming/c_array_of_pointers.htm		
