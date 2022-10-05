@@ -35,7 +35,7 @@ int main(int argc, char* argv[]) {
 				char *line = NULL;
 				size_t len = 0;
 				ssize_t line_length;
-				int* matrix_values;
+				int* equation_values;
 				int in_insert_equation_mode = 0; // false
 
 				while ((line_length = getline(&line, &len, input_file)) != -1) {
@@ -43,23 +43,28 @@ int main(int argc, char* argv[]) {
     			printf("%s", line);
 
 					if (line_length < 2) {
+						// store_equation(equation_values);
+						for (int i = 0; i < sizeof(equation_values); i++) {
+							printf("%d", equation_values[i]);
+						}
+
 						in_insert_equation_mode = 0;
-						if (matrix_values)
-							free(matrix_values);
+						if (equation_values)
+							free(equation_values);
 					}
 
 					if (line_length >= 6 && in_insert_equation_mode != 0) {
 						for (int i = 0; i < 5; i++) {
 							if (isspace(line[i]) == 0) {
 								int value = (int)line[i];
-								matrix_values[i] = value;
+								equation_values[i] = value;
 							}
 						}
 					}
 
 					if (line_length == 2 && in_insert_equation_mode == 0) {
 						int qtd_matrix_rows = (int)line[0];
-						matrix_values = (int*)malloc(sizeof(int)*(qtd_matrix_rows*3));
+						equation_values = (int*)malloc(sizeof(int)*(qtd_matrix_rows*3));
 						in_insert_equation_mode = 1; // true
 					}
 				}
@@ -71,16 +76,29 @@ int main(int argc, char* argv[]) {
 			}
 		}
 		else {
+			menu();
+			
 		}
 	}
 	return 0;
 }
 
-void make_equation(char *matrix_values) {
+void menu() {
+	printf("
+	 _______                          
+	|     __|.---.-.--.--.-----.-----.
+	|    |  ||  _  |  |  |__ --|__ --|
+	|_______||___._|_____|_____|_____|                                  
+	");
+	printf("0 - Sair\n");
+	printf("1 - Escrever sistema\n\n");
+	printf("> Escolha uma opção: ");
+}
+
+void store_equation(int *equation_values) {
 
 }
 
-void solve_equation(int *matrix, int num_of_rows) { }
 
 // https://stackoverflow.com/questions/10874374/passing-a-unknown-size-matrix-reference-to-a-c-function
 // https://www.tutorialspoint.com/cprogramming/c_array_of_pointers.htm		
