@@ -1,5 +1,7 @@
 #include<stdio.h>
+#include<stdlib.h>
 #include<string.h>
+#include <ctype.h>
 
 #define MAX 500
 
@@ -30,30 +32,42 @@ int main(int argc, char* argv[]) {
 				return 1;
 			}
 			else {
-				char c;
+				char *line = NULL;
+				size_t len = 0;
+				ssize_t line_length;
+				int* matrix_values;
+				int in_insert_equation_mode = 0; // false
 
-				int matrix_rows = 0;
-				int row[3] = {};
-				int cnt = -1;
-				int qtd_added_rows = 0;
+				while ((line_length = getline(&line, &len, input_file)) != -1) {
+					printf("Retrieved line of length %zu:\n", line_length);
+    			printf("%s", line);
 
-				while ((c = fgetc(input_file)) != EOF) {
-					int value = (int)c;
+					if (line_length < 2) {
+						in_insert_equation_mode = 0;
+						if (matrix_values)
+							free(matrix_values);
+					}
 
-					if (matrix_rows > 0) {
-						if (cnt < 3) 
-							row[++cnt] = (int)c;
-						else {
-							qtd_added_rows++;
-
-							if (qtd_added_rows == matrix_rows) {
-								// reset matrix rows size to read the next
-								matrix_rows = 0;
+					if (line_length >= 6 && in_insert_equation_mode != 0) {
+						for (int i = 0; i < 5; i++) {
+							if (isspace(line[i]) == 0) {
+								int value = (int)line[i];
+								matrix_values[i] = value;
 							}
 						}
 					}
+
+					if (line_length == 2 && in_insert_equation_mode == 0) {
+						int qtd_matrix_rows = (int)line[0];
+						matrix_values = (int*)malloc(sizeof(int)*(qtd_matrix_rows*3));
+						in_insert_equation_mode = 1; // true
+					}
 				}
+
 				fclose(input_file);
+
+				if (line)
+					free(line);
 			}
 		}
 		else {
@@ -62,7 +76,9 @@ int main(int argc, char* argv[]) {
 	return 0;
 }
 
+void make_equation(char *matrix_values) {
 
+}
 
 void solve_equation(int *matrix, int num_of_rows) { }
 
