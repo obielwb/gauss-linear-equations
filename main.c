@@ -135,11 +135,16 @@ int main(int argument_count, char *argument_values[])
           }
           else
           {
-            int remaining_equations = qtd_equations;
+            const int remaining_equations = qtd_equations;
 
-                        size_t buffer_size = 32;
+            const size_t buffer_size = 32;
             size_t characters;
             char *buffer = (char *)malloc(buffer_size * sizeof(char));
+
+            char **equations = malloc(sizeof(char *) * qtd_equations);
+            v[0] = malloc(sizeof(char) * buffer_size * qtd_equations);
+            for (int i = 0; i < qtd_equations; i++)
+              equations[i] = v[0] + i * buffer_size;
 
             while (remaining_equations > 0)
             {
@@ -155,6 +160,7 @@ int main(int argument_count, char *argument_values[])
               {
                 printf("Retrieved line of length %zu:\n", characters);
                 printf("%s", buffer);
+                v[qtd_equations - remaining_equations] = buffer;
               }
 
               qtd_equations--;
