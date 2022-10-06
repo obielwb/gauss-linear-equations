@@ -49,54 +49,75 @@ int main(int argument_count, char *argument_values[])
       {
         char line[256];
         size_t length = 0;
-        size_t line_length;
-        int *equation_values;
-        boolean inserting_equations = false;
+        int *matrix_values;
+        int matrix_values_atual_position = 0;
+        int inserting_equations = 0; // false
+        int matrix_size;
 
-        // while ((line_length = getline(&line, &length, file)) != -1) {
-        // TODO: read line properly
+
         while (fgets(line, sizeof(line), file) != NULL)
         {
-          printf("Retrieved line of length %zu:\n", strlen(line));
-          printf("%s", line);
+          printf("> Retrieved line of length %zu:\n", strlen(line));
+          printf("> %s", line);
 
-          if (line_length < 2)
+          int qtd_line_elements = 0;
+
+          char* token = strtok(line, " ");
+          char *values;
+          
+          while (token != NULL)
           {
-            // store_equation(equation_values);
-            for (int i = 0; i < sizeof(equation_values); i++)
+            qtd_line_elements++;
+            token = strtok(NULL, " ");
+          }
+          
+          if (qtd_line_elements < 2)
+          {
+            // store_equation(matrix_values);
+            for (int i = 0; i < sizeof(matrix_values); i++)
             {
-              printf("%d", equation_values[i]);
+              printf("%d", matrix_values[i]);
             }
 
             inserting_equations = 0;
-            if (equation_values)
-              free(equation_values);
+            if (matrix_values)
+              free(matrix_values);
+
+            printf("Reset operation\n");
           }
 
-          else if (line_length >= 6 && inserting_equations != 0)
+          else if (qtd_line_elements == 2 && inserting_equations == 0)
           {
-            for (int i = 0; i < 5; i++)
-            {
-              if (isspace(line[i]) == 0)
-              {
-                int value = (int)line[i];
-                equation_values[i] = value;
+            token = strtok(line, " "); // get the first element again
+            sscanf(token, "%d", &matrix_size);
+            matrix_values = (int *)malloc(sizeof(int) * (matrix_size * matrix_size));
+            inserting_equations = 1;
+
+            printf("Qtd matrix rows: %d\n", matrix_size);
+          }
+
+          else if (inserting_equations != 0)
+          {
+            int equation_values[matrix_size];
+
+            char* equation_element = strtok(line, " ");
+
+            while (equation_element != NULL) {
+              if (isspace(*equation_element) == 0) { 
+                int value;
+                sscanf(equation_element, "%d", &value);
+                matrix_values[matrix_values_atual_position] = value;
+                equation_element = strtok(NULL, " ");
+                matrix_values_atual_position++;
+                printf("Value: %d\n", value);
               }
             }
           }
 
-          else if (line_length == 2 && inserting_equations == 0)
-          {
-            int qtd_matrix_rows = (int)line[0];
-            equation_values = (int *)malloc(sizeof(int) * (qtd_matrix_rows * 3));
-            inserting_equations = true;
-          }
+          
         }
 
         fclose(file);
-
-        if (line)
-          free(line);
       }
     }
     else
@@ -135,16 +156,22 @@ int main(int argument_count, char *argument_values[])
           }
           else
           {
-            const int remaining_equations = qtd_equations;
+            int remaining_equations = qtd_equations;
 
-            const size_t buffer_size = 32;
+            size_t buffer_size = 32;
             size_t characters;
             char *buffer = (char *)malloc(buffer_size * sizeof(char));
 
+            if (buffer == NULL)
+            {
+              printf("Error: Could not allocate memory to the read buffer. Run the program again.\n");
+              return 1;
+            }
+
             char **equations = malloc(sizeof(char *) * qtd_equations);
-            v[0] = malloc(sizeof(char) * buffer_size * qtd_equations);
+            equations[0] = malloc(sizeof(char) * buffer_size * qtd_equations);
             for (int i = 0; i < qtd_equations; i++)
-              equations[i] = v[0] + i * buffer_size;
+              equations[i] = equations[0] + i * buffer_size;
 
             while (remaining_equations > 0)
             {
@@ -160,7 +187,7 @@ int main(int argument_count, char *argument_values[])
               {
                 printf("Retrieved line of length %zu:\n", characters);
                 printf("%s", buffer);
-                v[qtd_equations - remaining_equations] = buffer;
+                equations[qtd_equations - remaining_equations] = buffer;
               }
 
               qtd_equations--;
@@ -181,7 +208,7 @@ int main(int argument_count, char *argument_values[])
 
 void extract_coefficients() {}
 
-void store_equation(int *equation_values) {}
+void store_equation(int *matrix_values) {}
 
 // https://stackoverflow.com/questions/10874374/passing-a-unknown-size-matrix-reference-to-a-c-function
 // https://www.tutorialspoint.com/cprogramming/c_array_of_pointers.htm
