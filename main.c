@@ -63,22 +63,20 @@ int main(int argument_count, char *argument_values[])
           int qtd_line_elements = 0;
 
           char* token = strtok(line, " ");
-          char *values;
           
           while (token != NULL)
           {
             qtd_line_elements++;
             token = strtok(NULL, " ");
           }
+
+          printf("elements %d\n", qtd_line_elements);
           
-          if (qtd_line_elements < 2)
+
+          if (qtd_line_elements < 1)
           {
             // store_equation(matrix_values);
-            for (int i = 0; i < sizeof(matrix_values); i++)
-            {
-              printf("%d", matrix_values[i]);
-            }
-
+            
             inserting_equations = 0;
             if (matrix_values)
               free(matrix_values);
@@ -86,10 +84,10 @@ int main(int argument_count, char *argument_values[])
             printf("Reset operation\n");
           }
 
-          else if (qtd_line_elements == 2 && inserting_equations == 0)
+          else if (qtd_line_elements == 1 && inserting_equations == 0)
           {
-            token = strtok(line, " "); // get the first element again
-            sscanf(token, "%d", &matrix_size);
+            char* first_element = strtok(line, " "); 
+            sscanf(first_element, "%d", &matrix_size);
             matrix_values = (int *)malloc(sizeof(int) * (matrix_size * matrix_size));
             inserting_equations = 1;
 
@@ -113,8 +111,6 @@ int main(int argument_count, char *argument_values[])
               }
             }
           }
-
-          
         }
 
         fclose(file);
