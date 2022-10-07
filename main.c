@@ -63,7 +63,7 @@ int main(int argument_count, char *argument_values[])
           int qtd_line_elements = 0;
 
           char* token = strtok(line, " ");
-          
+
           while (token != NULL)
           {
             qtd_line_elements++;
@@ -71,12 +71,12 @@ int main(int argument_count, char *argument_values[])
           }
 
           printf("elements %d\n", qtd_line_elements);
-          
+
 
           if (qtd_line_elements < 1)
           {
             // store_equation(matrix_values);
-            
+
             inserting_equations = 0;
             if (matrix_values)
               free(matrix_values);
@@ -86,9 +86,9 @@ int main(int argument_count, char *argument_values[])
 
           else if (qtd_line_elements == 1 && inserting_equations == 0)
           {
-            char* first_element = strtok(line, " "); 
+            char* first_element = strtok(line, " ");
             sscanf(first_element, "%d", &matrix_size);
-            matrix_values = (int *)malloc(sizeof(int) * (matrix_size * matrix_size));
+            matrix_values = (int *)malloc(sizeof(int) * (matrix_size * matrix_size + 1));
             inserting_equations = 1;
 
             printf("Qtd matrix rows: %d\n", matrix_size);
@@ -101,7 +101,7 @@ int main(int argument_count, char *argument_values[])
             char* equation_element = strtok(line, " ");
 
             while (equation_element != NULL) {
-              if (isspace(*equation_element) == 0) { 
+              if (isspace(*equation_element) == 0) {
                 int value;
                 sscanf(equation_element, "%d", &value);
                 matrix_values[matrix_values_atual_position] = value;
@@ -202,9 +202,105 @@ int main(int argument_count, char *argument_values[])
   return 0;
 }
 
+boolean equal_results_between_pairs_of_lines(int *matrix, int matrix_order) {
+  /*
+    TODO: implement in c
+    int n=2;
+    int arr[n]={1,2};
+    vector<pair<int,int>>p;
+    getAllPairs(arr,0,n-1,p);
+    for(auto it:p){
+        cout<<it.first<<" "<<it.second<<endl;
+    }
+  */
+  for (int line = 0; line < matrix_order; line++) {
+    for (int column = 0; column < matrix_order; column++) {
+      matrix[line * matrix_order + column];
+    }
+  }
+}
+
+void get_pairs_merge(int *arr, int left, int right, int mid, int *vector_of_pairs) {
+  int b[left + right + 1] = {};
+  int i = left, k = l, j = mid + 1;
+
+  int vector_of_pairs_position_line = 0;
+  int vector_of_pairs_position_column = 0;
+
+  while(i <= mid && j <= right){
+        if(arr[i]>arr[j]){
+            b[k]=arr[j];
+
+            vector_of_pairs[vector_of_pairs_position_line++ * 2 + vector_of_pairs_position_column++] = arr[i];
+            vector_of_pairs[vector_of_pairs_position_line++ * 2 + vector_of_pairs_position_column++] = arr[j];
+            vector_of_pairs_position_column = 0;
+
+            vector_of_pairs[vector_of_pairs_position_line++ * 2 + vector_of_pairs_position_column++] = arr[j];
+            vector_of_pairs[vector_of_pairs_position_line++ * 2 + vector_of_pairs_position_column++] = arr[i];
+            vector_of_pairs_position_column = 0;
+
+            vector_of_pairs[vector_of_pairs_position_line++ * 2 + vector_of_pairs_position_column++] = arr[j];
+            vector_of_pairs[vector_of_pairs_position_line++ * 2 + vector_of_pairs_position_column++] = arr[j];
+            vector_of_pairs_position_column = 0;
+
+            k++;
+            j++;
+        }
+        else{
+            vector_of_pairs[vector_of_pairs_position_line++ * 2 + vector_of_pairs_position_column++] = arr[i];
+            vector_of_pairs[vector_of_pairs_position_line++ * 2 + vector_of_pairs_position_column++] = arr[j];
+            vector_of_pairs_position_column = 0;
+
+            vector_of_pairs[vector_of_pairs_position_line++ * 2 + vector_of_pairs_position_column++] = arr[j];
+            vector_of_pairs[vector_of_pairs_position_line++ * 2 + vector_of_pairs_position_column++] = arr[i];
+            vector_of_pairs_position_column = 0;
+
+            vector_of_pairs[vector_of_pairs_position_line++ * 2 + vector_of_pairs_position_column++] = arr[i];
+            vector_of_pairs[vector_of_pairs_position_line++ * 2 + vector_of_pairs_position_column++] = arr[i];
+            vector_of_pairs_position_column = 0;
+
+            b[k]=arr[i];
+            i++;
+            k++;
+        }
+    }
+
+    while(i<=mid){
+        b[k]=arr[i];
+        vector_of_pairs[vector_of_pairs_position_line++ * 2 + vector_of_pairs_position_column++] = arr[i];
+        vector_of_pairs[vector_of_pairs_position_line++ * 2 + vector_of_pairs_position_column++] = arr[i];
+        vector_of_pairs_position_column = 0;
+
+        i++;
+        k++;
+    }
+    while(j<=right){
+        b[k]=arr[j];
+        vector_of_pairs[vector_of_pairs_position_line++ * 2 + vector_of_pairs_position_column++] = arr[j];
+        vector_of_pairs[vector_of_pairs_position_line++ * 2 + vector_of_pairs_position_column++] = arr[j];
+        vector_of_pairs_position_column = 0;
+        j++;
+        k++;
+    }
+
+    for(int x = left; x <= right; x++){
+        arr[x]=b[x];
+    }
+}
+
+void get_all_pairs(int *arr, int left, int right, int *vector_of_pairs) {
+  if (left < right) {
+    int mid = (left + right) / 2;
+    get_all_pairs(arr, left, mid, vector_of_pairs);
+    get_all_pairs(arr, mid + 1, right, vector_of_pairs);
+    get_pairs_merge(arr, left, right, mid, vector_of_pairs);
+  }
+}
+
 void extract_coefficients() {}
 
 void store_equation(int *matrix_values) {}
 
 // https://stackoverflow.com/questions/10874374/passing-a-unknown-size-matrix-reference-to-a-c-function
 // https://www.tutorialspoint.com/cprogramming/c_array_of_pointers.htm
+// https://www.geeksforgeeks.org/find-all-pairs-possible-from-the-given-array/
