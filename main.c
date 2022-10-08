@@ -66,23 +66,33 @@ int main(int argument_count, char *argument_values[])
 
           while (token != NULL)
           {
-            qtd_line_elements++;
+            if (isspace(*token) == 0)
+              qtd_line_elements++;
             token = strtok(NULL, " ");
           }
 
           printf("elements %d\n", qtd_line_elements);
 
-
+          
           if (qtd_line_elements < 1)
           {
             // store_equation(matrix_values);
 
+            matrix_size = 0;
             inserting_equations = 0;
             if (matrix_values)
               free(matrix_values);
 
             printf("Reset operation\n");
           }
+
+          else if (matrix_size > 0)
+            if (qtd_line_elements != matrix_size + 1)
+            {
+              printf("Error: Invalid matrix size.");
+              return 1;
+            }
+
 
           else if (qtd_line_elements == 1 && inserting_equations == false)
           {
@@ -105,10 +115,10 @@ int main(int argument_count, char *argument_values[])
                 int value;
                 sscanf(equation_element, "%d", &value);
                 matrix_values[matrix_values_atual_position] = value;
-                equation_element = strtok(NULL, " ");
                 matrix_values_atual_position++;
                 printf("Value: %d\n", value);
               }
+              equation_element = strtok(NULL, " ");
             }
           }
         }
@@ -203,19 +213,18 @@ int main(int argument_count, char *argument_values[])
 }
 
 boolean equal_results_between_pairs_of_lines(int *matrix, int matrix_order) {
-  int lines_division[matrix_order] = {};  
+  int *lines_division = (int *)malloc(sizeof(int) * (matrix_order * matrix_order));
   for (int i = 0; i < matrix_order; i++) {
     for (int j = i + 1; j < matrix_order; j++) {
-      int result = 0;
       for (int k = 0; k < matrix_order; k++) {
-        result = matrix[i * matrix_order + k] / matrix[j * matrix_order + k];
+        int result = matrix[i * matrix_order + k] / matrix[j * matrix_order + k];
         lines_division[i] = result;
       }
     }
   }
 
   int qtd_appears_same_number = 0;
-  for() {
+  for(int i = 0; i < (matrix_order * matrix_order); i++) {
     if (lines_division[i] == lines_division[i + 1]) {
       qtd_appears_same_number++;
     }
