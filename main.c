@@ -246,6 +246,15 @@ boolean equal_results_between_pairs_of_lines(int *matrix, int matrix_order) {
   return true;
 }
 
+void turn_into_one_first_diagonal(int *matrix, int matrix_order) {
+  int first_diagonal_value = matrix[0];
+  for (int i = 0; i < matrix_order + 1; i++) {
+    matrix[i] = matrix[i] / first_diagonal_value;
+  }
+}
+
+boolean exist_zeros_in_main_diagonal(int *matrix) { }
+
 void extract_coefficients() {}
 
 void store_equation(int *matrix_values) {}
@@ -253,3 +262,7 @@ void store_equation(int *matrix_values) {}
 // https://stackoverflow.com/questions/10874374/passing-a-unknown-size-matrix-reference-to-a-c-function
 // https://www.tutorialspoint.com/cprogramming/c_array_of_pointers.htm
 // https://www.geeksforgeeks.org/find-all-pairs-possible-from-the-given-array/
+
+// ------------- exist_zeros_in_main_diagonal() -------------
+// https://cs.stackexchange.com/questions/58096/permutation-on-matrix-to-fill-main-diagonal-with-non-zero-values
+// https://www.geeksforgeeks.org/maximum-bipartite-matching/
