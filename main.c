@@ -51,7 +51,7 @@ int main(int argument_count, char *argument_values[])
         size_t length = 0;
         int *matrix_values;
         int matrix_values_atual_position = 0;
-        int inserting_equations = 0; // false
+        boolean inserting_equations = false; // false
         int matrix_size;
 
 
@@ -84,17 +84,17 @@ int main(int argument_count, char *argument_values[])
             printf("Reset operation\n");
           }
 
-          else if (qtd_line_elements == 1 && inserting_equations == 0)
+          else if (qtd_line_elements == 1 && inserting_equations == false)
           {
             char* first_element = strtok(line, " ");
             sscanf(first_element, "%d", &matrix_size);
             matrix_values = (int *)malloc(sizeof(int) * (matrix_size * matrix_size + 1));
-            inserting_equations = 1;
+            inserting_equations = true;
 
             printf("Qtd matrix rows: %d\n", matrix_size);
           }
 
-          else if (inserting_equations != 0)
+          else if (inserting_equations == true)
           {
             int equation_values[matrix_size];
 
