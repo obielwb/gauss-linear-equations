@@ -8,5 +8,5 @@
   - [ ] Verify if the values passed are valid
   - [ ] Check if matrix is square
   - [ ] Verify if matrix has all elements
-  - [ ] Verify if results between pairs of lines is not equals
+  - [x] Verify if results between pairs of lines is not equals
 - [ ] Refactor variables size

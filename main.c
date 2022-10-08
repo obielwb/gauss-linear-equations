@@ -203,17 +203,31 @@ int main(int argument_count, char *argument_values[])
 }
 
 boolean equal_results_between_pairs_of_lines(int *matrix, int matrix_order) {
-  int lines_sum[matrix_order] = {};  
+  int lines_division[matrix_order] = {};  
   for (int i = 0; i < matrix_order; i++) {
     for (int j = i + 1; j < matrix_order; j++) {
       int result = 0;
       for (int k = 0; k < matrix_order; k++) {
         result = matrix[i * matrix_order + k] / matrix[j * matrix_order + k];
-        lines_sum[i] = result;
+        lines_division[i] = result;
       }
     }
   }
 
+  int qtd_appears_same_number = 0;
+  for() {
+    if (lines_division[i] == lines_division[i + 1]) {
+      qtd_appears_same_number++;
+    }
+    else {
+      qtd_appears_same_number = 0;
+    }
+  }
+  
+  if (qtd_appears_same_number == matrix_order) {
+    return false;
+  }
+  
   return true;
 }
 
