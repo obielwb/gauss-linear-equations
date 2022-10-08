@@ -77,6 +77,13 @@ int main(int argument_count, char *argument_values[])
           if (qtd_line_elements < 1)
           {
             // store_equation(matrix_values);
+            printf("size : %d\n", matrix_size);
+            printf("values : %d\n", matrix_values_atual_position);
+            printf("first: %d\n", matrix_values[0]);
+            for (int i = 0; i < (matrix_size); i++)
+            {
+              printf("%d ", matrix_values[i]);
+            }
 
             matrix_size = 0;
             inserting_equations = 0;
@@ -86,28 +93,17 @@ int main(int argument_count, char *argument_values[])
             printf("Reset operation\n");
           }
 
-          else if (matrix_size > 0)
+          else if (matrix_size > 0) {
             if (qtd_line_elements != matrix_size + 1)
             {
               printf("Error: Invalid matrix size.");
               return 1;
             }
-
-
-          else if (qtd_line_elements == 1 && inserting_equations == false)
-          {
-            char* first_element = strtok(line, " ");
-            sscanf(first_element, "%d", &matrix_size);
-            matrix_values = (int *)malloc(sizeof(int) * (matrix_size * matrix_size + 1));
-            inserting_equations = true;
-
-            printf("Qtd matrix rows: %d\n", matrix_size);
           }
 
-          else if (inserting_equations == true)
-          {
-            int equation_values[matrix_size];
 
+          if (inserting_equations == true)
+          {
             char* equation_element = strtok(line, " ");
 
             while (equation_element != NULL) {
@@ -120,6 +116,16 @@ int main(int argument_count, char *argument_values[])
               }
               equation_element = strtok(NULL, " ");
             }
+          }
+          else if (qtd_line_elements == 1 && inserting_equations == false)
+          {
+            char* first_element = strtok(line, " ");
+            sscanf(first_element, "%d", &matrix_size);
+            matrix_values = (int *)malloc(sizeof(int) * (matrix_size * matrix_size + 1));
+            inserting_equations = true;
+
+            printf("Qtd matrix rows: %d\n", matrix_size);
+            printf("inserting equations %d\n", inserting_equations);
           }
         }
 
