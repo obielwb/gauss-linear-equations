@@ -13,6 +13,8 @@ typedef enum
 } boolean;
 
 int *matrices[MAXIMUM];
+int order_and_matrix[MAXIMUM] = {};
+int solutions[MAXIMUM] = {};
 
 int main(int argument_count, char *argument_values[])
 {
@@ -213,6 +215,7 @@ int main(int argument_count, char *argument_values[])
 
       return 0;
     }
+    free(matrices);
   }
 
   return 0;
@@ -234,7 +237,7 @@ boolean equal_results_between_pairs_of_lines(int *matrix, int matrix_order)
   }
 
   int qtd_appears_same_number = 0;
-  for (int i = 0; i < (matrix_order * matrix_order); i++)
+  for (int i = 0; i < (matrix_order * matrix_order) - 1; i++)
   {
     if (lines_division[i] == lines_division[i + 1])
     {
@@ -256,7 +259,8 @@ boolean equal_results_between_pairs_of_lines(int *matrix, int matrix_order)
 
 boolean exist_zeros_in_main_diagonal(int *matrix) {}
 
-void turn_into_one(int *matrix, int number_column_position, int number_line_position, int matrix_order)
+// matrix_order + 1 because the matrix has the results in the last column
+void turn_diagonal_element_into_one(int *matrix, int number_column_position, int number_line_position, int matrix_order)
 {
   int number = matrix[number_line_position * (matrix_order + 1) + number_column_position];
   for (int i = 0; i < matrix_order + 1; i++)
@@ -265,8 +269,41 @@ void turn_into_one(int *matrix, int number_column_position, int number_line_posi
   }
 }
 
-void make_column_elements_zero(int *matrix, int matrix_order)
+void turn_element_into_zero(int *matrix, int matrix_order, int line_that_just_implemented_one, int current_line, int number_to_multiply)
 {
+  for (int i = 0; i < matrix_order + 1; i++)
+  {
+    int multiplied_number = matrix[line_that_just_implemented_one * (matrix_order + 1) + i] * number_to_multiply;
+    matrix[current_line * (matrix_order + 1) + i] = matrix[current_line * (matrix_order + 1) + i] + multiplied_number;
+  }
+}
+
+void solve_equation_by_make_column_elements_zero()
+{
+  for (int k = 0; k < sizeof(order_and_matrix); k += 2)
+  {
+    int matrix_order = order_and_matrix[k];
+    int *matrix = matrices[order_and_matrix[k + 1]];
+
+    turn_diagonal_element_into_one(matrix, 0, 0, matrix_order);
+    int line_that_just_implemented_one = 0;
+
+    for (int column = 0; column < matrix_order; column++)
+    {
+      for (int line = 0; line < matrix_order; line++)
+      {
+        if (line != column)
+        {
+          int current_number = matrix[line * (matrix_order + 1) + column];
+          if (current_number != 0)
+          {
+            turn_element_into_zero(matrix, matrix_order, line_that_just_implemented_one, line, current_number);
+          }
+        }
+      }
+    }
+  }
+
   turn_into_one(matrix, 0, 0, matrix_order); // turn the first element into 1
 
   // TODO: not finished yet
@@ -282,6 +319,8 @@ void make_column_elements_zero(int *matrix, int matrix_order)
         matrix[i * (matrix_order + 1) + j] = matrix[i * (matrix_order + 1) + j] + previous_line_value;
       }
     }
+
+    turn_into_one(matrix, i, i, matrix_order);
   }
 }
 
