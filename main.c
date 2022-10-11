@@ -298,29 +298,16 @@ void solve_equation_by_make_column_elements_zero()
           if (current_number != 0)
           {
             turn_element_into_zero(matrix, matrix_order, line_that_just_implemented_one, line, current_number);
+            if (matrix[line * (matrix_order + 1) + line] != 1)
+            {
+              // if we make the element of row N zero, the diagonal NxN becomes one
+              turn_diagonal_element_into_one(matrix, line, line, matrix_order);
+              line_that_just_implemented_one = line;
+            }
           }
         }
       }
     }
-  }
-
-  turn_into_one(matrix, 0, 0, matrix_order); // turn the first element into 1
-
-  // TODO: not finished yet
-
-  for (int i = 1; i < matrix_order; i++)
-  {
-    int number = matrix[i * (matrix_order + 1)];
-    if (number != 0)
-    {
-      for (int j = 0; j < matrix_order + 1; j++)
-      {
-        int previous_line_value = matrix[(i - 1) * (matrix_order + 1) + j] * (number * -1);
-        matrix[i * (matrix_order + 1) + j] = matrix[i * (matrix_order + 1) + j] + previous_line_value;
-      }
-    }
-
-    turn_into_one(matrix, i, i, matrix_order);
   }
 }
 
