@@ -13,8 +13,10 @@ typedef enum
 } boolean;
 
 float *matrices[MAXIMUM];
-int order_and_matrix[MAXIMUM] = {};
-float solutions[MAXIMUM] = {};
+int matrices_current_position = 0;
+
+int order_and_matrix[MAXIMUM * 2] = {};
+//float solutions[MAXIMUM] = {};
 
 int main(int argument_count, char *argument_values[])
 {
@@ -76,6 +78,7 @@ int main(int argument_count, char *argument_values[])
 
           if (qtd_line_elements < 1)
           {
+            // debug
             printf("size : %d\n", matrix_size);
             printf("values : %d\n", matrix_values_atual_position);
             printf("first: %f\n", matrix_values[0]);
@@ -84,6 +87,18 @@ int main(int argument_count, char *argument_values[])
               printf("%f ", matrix_values[i]);
             }
 
+            /*
+            if (can_have_no_zeros_in_main_diagonal(matrix_values) == true) 
+              if (equal_results_between_pairs_of_lines(matrix_values, matrix_size) == false) {
+                matrices[matrices_current_position] = matrix_values;
+                matrices_current_position++;
+                
+                // vector of pairs -> order and matrix position in matrices array
+                order_and_matrix[matrices_current_position] = matrix_size;
+                order_and_matrix[matrices_current_position + 1] = matrices_current_position;
+              }
+            */
+
             matrix_size = 0;
             inserting_equations = 0;
             if (matrix_values)
@@ -91,7 +106,6 @@ int main(int argument_count, char *argument_values[])
 
             printf("\nReset operation\n");
           }
-
           else if (matrix_size > 0)
           {
             if (qtd_line_elements != matrix_size + 1)
@@ -219,6 +233,7 @@ int main(int argument_count, char *argument_values[])
   return 0;
 }
 
+
 boolean equal_results_between_pairs_of_lines(float *matrix, int matrix_order)
 {
   float* lines_division = (float*)malloc(sizeof(float) * (matrix_order * matrix_order));
@@ -259,8 +274,7 @@ boolean equal_results_between_pairs_of_lines(float *matrix, int matrix_order)
   return false;
 }
 
-
-boolean exist_zeros_in_main_diagonal(int *matrix) {}
+boolean can_have_no_zeros_in_main_diagonal(float *matrix) {}
 
 // matrix_order + 1 because the matrix has the results in the last column
 void turn_diagonal_element_into_one(float *matrix, int number_column_position, int number_line_position, int matrix_order)
@@ -281,6 +295,7 @@ void turn_element_into_zero(float *matrix, int matrix_order, int line_that_just_
   }
 }
 
+// TODO: implement logic to store solutions
 void solve_equation_by_make_column_elements_zero()
 {
   for (int k = 0; k < sizeof(order_and_matrix); k += 2)
@@ -300,11 +315,11 @@ void solve_equation_by_make_column_elements_zero()
           float current_number = matrix[line * (matrix_order + 1) + column];
           if (current_number != 0.0)
           {
-            turn_element_into_zero(matrix, matrix_order, line_that_just_implemented_one, line, current_number);
+            turn_element_into_zero(matrix, matrix_order, line_that_just_implemented_one, line, (current_number * -1.0));
             if (matrix[line * (matrix_order + 1) + line] != 1.0)
             {
               // if we make the element of row N zero, the diagonal NxN becomes one
-              turn_diagonal_element_into_one(matrix, line, line, (float)matrix_order);
+              turn_diagonal_element_into_one(matrix, line, line, matrix_order);
               line_that_just_implemented_one = line;
             }
           }
@@ -313,10 +328,6 @@ void solve_equation_by_make_column_elements_zero()
     }
   }
 }
-
-void extract_coefficients() {}
-
-void store_equation(int *matrix_values) {}
 
 // https://stackoverflow.com/questions/10874374/passing-a-unknown-size-matrix-reference-to-a-c-function
 // https://www.tutorialspoint.com/cprogramming/c_array_of_pointers.htm

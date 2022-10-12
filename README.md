@@ -1,6 +1,6 @@
 <h2>ToDo</h2>
 
-- [ ] Change matrix type to float
+- [x] Change matrix type to float
 - [ ] Fix not inserting values on array problem
 - [ ] Make matrix store method
   - [ ] Dynamically allocate into a 2D array
