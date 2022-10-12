@@ -29,6 +29,12 @@ void menu() {
   printf("1 - Type in equations system\n\n");
 }
 
+void pause() {
+  printf("Press enter to continue...");
+  while ((getchar()) != '\n');
+  getchar();
+}
+
 int main(int argument_count, char *argument_values[])
 {
   if (argument_count > 2)
@@ -208,20 +214,40 @@ int main(int argument_count, char *argument_values[])
 
             while (remaining_equations > 0)
             {
-              printf("> Type the %d° equation: ", remaining_equations);
+              printf("> Type the %d° equation: ", remaining_equations); 
               characters = getline(&buffer, &buffer_size, stdin);
-              if (characters == -1)
+              if (isspace(buffer[0]) != 0)
               {
-                printf("Error: Could not read the equation. Run the program again.\n");
-                exit(1);
+                buffer[characters - 1] = '\0';
               }
-              else
-              {
-                if (isspace(buffer[0]) == 0)
+              else {
+                if (characters == -1)
+                {
+                  printf("Error: Could not read the equation. Run the program again.\n");
+                  exit(1);
+                }
+                else
                 {
                   printf("Retrieved line of length %zu:\n", characters);
                   printf("%s", buffer);
-                  equations[qtd_equations - remaining_equations] = buffer;
+
+                  int qtd_buffer_elements = 0;
+
+                  char *token = strtok(buffer, " ");
+
+                  while (token != NULL)
+                  {
+                    if (isspace(*token) == 0)
+                      qtd_buffer_elements++;
+                    token = strtok(NULL, " ");
+                  }
+
+                  if (qtd_buffer_elements != qtd_equations + 1)
+                  {
+                    printf("Error: Invalid number of elements in the equation.\n");
+                    remaining_equations++;
+                  }
+
                   remaining_equations--;
                 }
               }
@@ -231,9 +257,7 @@ int main(int argument_count, char *argument_values[])
 
         else {
           printf("\n> Invalid option!\n");
-          printf("Press enter to continue...");
-          while ((getchar()) != '\n');
-          getchar();
+          pause();
         }
       }
 

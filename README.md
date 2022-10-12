@@ -7,7 +7,7 @@
 - [x] Refactor logic of store values on matrix_values when read file
 - [ ] Add verifications (Chain of Responsability)
   - [ ] Verify if the values passed are valid
-  - [ ] Check if matrix is square
-  - [ ] Verify if matrix has all elements
+  - [x] Check if matrix is square
+  - [x] Verify if matrix has all elements
   - [x] Verify if results between pairs of lines is not equals
 - [ ] Refactor variables size
