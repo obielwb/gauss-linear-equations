@@ -12,9 +12,9 @@ typedef enum
   true
 } boolean;
 
-int *matrices[MAXIMUM];
+float *matrices[MAXIMUM];
 int order_and_matrix[MAXIMUM] = {};
-int solutions[MAXIMUM] = {};
+float solutions[MAXIMUM] = {};
 
 int main(int argument_count, char *argument_values[])
 {
@@ -51,7 +51,7 @@ int main(int argument_count, char *argument_values[])
       {
         char line[256];
         size_t length = 0;
-        int *matrix_values;
+        float *matrix_values;
         int matrix_values_atual_position = 0;
         boolean inserting_equations = false; // false
         int matrix_size;
@@ -76,13 +76,12 @@ int main(int argument_count, char *argument_values[])
 
           if (qtd_line_elements < 1)
           {
-            // store_equation(matrix_values);
             printf("size : %d\n", matrix_size);
             printf("values : %d\n", matrix_values_atual_position);
-            printf("first: %d\n", matrix_values[0]);
+            printf("first: %f\n", matrix_values[0]);
             for (int i = 0; i < (matrix_size); i++)
             {
-              printf("%d ", matrix_values[i]);
+              printf("%f ", matrix_values[i]);
             }
 
             matrix_size = 0;
@@ -90,7 +89,7 @@ int main(int argument_count, char *argument_values[])
             if (matrix_values)
               free(matrix_values);
 
-            printf("Reset operation\n");
+            printf("\nReset operation\n");
           }
 
           else if (matrix_size > 0)
@@ -110,11 +109,11 @@ int main(int argument_count, char *argument_values[])
             {
               if (isspace(*equation_element) == 0)
               {
-                int value;
-                sscanf(equation_element, "%d", &value);
+                float value;
+                sscanf(equation_element, "%f", &value);
                 matrix_values[matrix_values_atual_position] = value;
                 matrix_values_atual_position++;
-                printf("Value: %d\n", value);
+                printf("Value: %f\n", value);
               }
               equation_element = strtok(NULL, " ");
             }
@@ -123,7 +122,7 @@ int main(int argument_count, char *argument_values[])
           {
             char *first_element = strtok(line, " ");
             sscanf(first_element, "%d", &matrix_size);
-            matrix_values = (int *)malloc(sizeof(int) * (matrix_size * matrix_size + 1));
+            matrix_values = (float *)malloc(sizeof(float) * (matrix_size * matrix_size + 1));
             inserting_equations = true;
 
             printf("Qtd matrix rows: %d\n", matrix_size);
@@ -215,65 +214,69 @@ int main(int argument_count, char *argument_values[])
 
       return 0;
     }
-    free(matrices);
   }
 
   return 0;
 }
 
-boolean equal_results_between_pairs_of_lines(int *matrix, int matrix_order)
+boolean equal_results_between_pairs_of_lines(float *matrix, int matrix_order)
 {
-  int *lines_division = (int *)malloc(sizeof(int) * (matrix_order * matrix_order));
+  float* lines_division = (float*)malloc(sizeof(float) * (matrix_order * matrix_order));
+  int lines_division_position = 0;
+
+  // i - first line of couple
+  // j - second line of couple
+  // k - interator to divide each element
   for (int i = 0; i < matrix_order; i++)
   {
     for (int j = i + 1; j < matrix_order; j++)
     {
       for (int k = 0; k < matrix_order; k++)
       {
-        int result = matrix[i * matrix_order + k] / matrix[j * matrix_order + k];
-        lines_division[i] = result;
+        float result = matrix[i * (matrix_order + 1) + k] / matrix[j * (matrix_order + 1) + k];
+        lines_division[lines_division_position] = result;
+        lines_division_position++;
       }
     }
   }
 
   int qtd_appears_same_number = 0;
   for (int i = 0; i < (matrix_order * matrix_order) - 1; i++)
-  {
+    {
     if (lines_division[i] == lines_division[i + 1])
     {
       qtd_appears_same_number++;
+      if (qtd_appears_same_number == matrix_order)
+      {    
+        return true;
+      }
     }
     else
     {
       qtd_appears_same_number = 0;
     }
   }
-
-  if (qtd_appears_same_number == matrix_order)
-  {
-    return false;
-  }
-
-  return true;
+  return false;
 }
+
 
 boolean exist_zeros_in_main_diagonal(int *matrix) {}
 
 // matrix_order + 1 because the matrix has the results in the last column
-void turn_diagonal_element_into_one(int *matrix, int number_column_position, int number_line_position, int matrix_order)
+void turn_diagonal_element_into_one(float *matrix, int number_column_position, int number_line_position, int matrix_order)
 {
-  int number = matrix[number_line_position * (matrix_order + 1) + number_column_position];
+  float number = matrix[number_line_position * (matrix_order + 1) + number_column_position];
   for (int i = 0; i < matrix_order + 1; i++)
   {
     matrix[number_column_position * (matrix_order + 1) + i] = matrix[number_column_position * (matrix_order + 1) + i] / number;
   }
 }
 
-void turn_element_into_zero(int *matrix, int matrix_order, int line_that_just_implemented_one, int current_line, int number_to_multiply)
+void turn_element_into_zero(float *matrix, int matrix_order, int line_that_just_implemented_one, int current_line, float number_to_multiply)
 {
   for (int i = 0; i < matrix_order + 1; i++)
   {
-    int multiplied_number = matrix[line_that_just_implemented_one * (matrix_order + 1) + i] * number_to_multiply;
+    float multiplied_number = matrix[line_that_just_implemented_one * (matrix_order + 1) + i] * number_to_multiply;
     matrix[current_line * (matrix_order + 1) + i] = matrix[current_line * (matrix_order + 1) + i] + multiplied_number;
   }
 }
@@ -283,7 +286,7 @@ void solve_equation_by_make_column_elements_zero()
   for (int k = 0; k < sizeof(order_and_matrix); k += 2)
   {
     int matrix_order = order_and_matrix[k];
-    int *matrix = matrices[order_and_matrix[k + 1]];
+    float *matrix = matrices[order_and_matrix[k + 1]];
 
     turn_diagonal_element_into_one(matrix, 0, 0, matrix_order);
     int line_that_just_implemented_one = 0;
@@ -294,14 +297,14 @@ void solve_equation_by_make_column_elements_zero()
       {
         if (line != column)
         {
-          int current_number = matrix[line * (matrix_order + 1) + column];
-          if (current_number != 0)
+          float current_number = matrix[line * (matrix_order + 1) + column];
+          if (current_number != 0.0)
           {
             turn_element_into_zero(matrix, matrix_order, line_that_just_implemented_one, line, current_number);
-            if (matrix[line * (matrix_order + 1) + line] != 1)
+            if (matrix[line * (matrix_order + 1) + line] != 1.0)
             {
               // if we make the element of row N zero, the diagonal NxN becomes one
-              turn_diagonal_element_into_one(matrix, line, line, matrix_order);
+              turn_diagonal_element_into_one(matrix, line, line, (float)matrix_order);
               line_that_just_implemented_one = line;
             }
           }
