@@ -1,5 +1,6 @@
 <h2>ToDo</h2>
 
+- [ ] Fix problem of \n on keyboard buffer
 - [x] Change matrix type to float
 - [ ] Fix not inserting values on array problem
 - [ ] Make matrix store method
