@@ -18,6 +18,17 @@ int matrices_current_position = 0;
 int order_and_matrix[MAXIMUM * 2] = {};
 //float solutions[MAXIMUM] = {};
 
+void menu() {
+  system("clear");
+      printf(
+          "_______\n"
+          "|     __|.---.-.--.--.-----.-----.\n"
+          "|    |  ||  _  |  |  |__ --|__ --|\n"
+          "|_______||___._|_____|_____|_____|\n\n");
+  printf("0 - Exit\n"); 
+  printf("1 - Type in equations system\n\n");
+}
+
 int main(int argument_count, char *argument_values[])
 {
   if (argument_count > 2)
@@ -123,11 +134,13 @@ int main(int argument_count, char *argument_values[])
             {
               if (isspace(*equation_element) == 0)
               {
-                float value;
-                sscanf(equation_element, "%f", &value);
-                matrix_values[matrix_values_atual_position] = value;
-                matrix_values_atual_position++;
-                printf("Value: %f\n", value);
+                if (isdigit(*equation_element) != 0)
+                {
+                  float value = atof(equation_element);
+                  matrix_values[matrix_values_atual_position] = value;
+                  matrix_values_atual_position++;
+                  printf("Value: %f\n", value);
+                }
               }
               equation_element = strtok(NULL, " ");
             }
@@ -149,16 +162,9 @@ int main(int argument_count, char *argument_values[])
     }
     else
     {
-      printf(
-          "_______\n"
-          "|     __|.---.-.--.--.-----.-----.\n"
-          "|    |  ||  _  |  |  |__ --|__ --|\n"
-          "|_______||___._|_____|_____|_____|\n\n");
-
       while (true)
       {
-        printf("0 - Exit\n");
-        printf("1 - Type in equations system\n\n");
+        menu();  
 
         char option;
 
@@ -192,7 +198,7 @@ int main(int argument_count, char *argument_values[])
             if (buffer == NULL)
             {
               printf("Error: Could not allocate memory to the read buffer. Run the program again.\n");
-              return 1;
+              exit(1);
             }
 
             char **equations = malloc(sizeof(char *) * qtd_equations);
@@ -204,26 +210,31 @@ int main(int argument_count, char *argument_values[])
             {
               printf("> Type the %d° equation: ", remaining_equations);
               characters = getline(&buffer, &buffer_size, stdin);
-
               if (characters == -1)
               {
-                printf("Error: Invalid equation, type again\n");
-                remaining_equations++;
+                printf("Error: Could not read the equation. Run the program again.\n");
+                exit(1);
               }
               else
               {
-                printf("Retrieved line of length %zu:\n", characters);
-                printf("%s", buffer);
-                equations[qtd_equations - remaining_equations] = buffer;
+                if (isspace(buffer[0]) == 0)
+                {
+                  printf("Retrieved line of length %zu:\n", characters);
+                  printf("%s", buffer);
+                  equations[qtd_equations - remaining_equations] = buffer;
+                  remaining_equations--;
+                }
               }
-
-              qtd_equations--;
             }
           }
         }
 
-        else
-          printf("\n> Invalid option!\n\n");
+        else {
+          printf("\n> Invalid option!\n");
+          printf("Press enter to continue...");
+          while ((getchar()) != '\n');
+          getchar();
+        }
       }
 
       return 0;
@@ -232,6 +243,7 @@ int main(int argument_count, char *argument_values[])
 
   return 0;
 }
+
 
 
 boolean equal_results_between_pairs_of_lines(float *matrix, int matrix_order)
