@@ -38,7 +38,9 @@ void pause()
   getchar();
 }
 
-float * sanitize_input_equation(char *equation, int qtd_equations) { }
+float *sanitize_input_equation(char *equation, int qtd_equations)
+{
+}
 
 boolean equal_results_between_pairs_of_lines(float *matrix, int matrix_order)
 {
@@ -135,8 +137,6 @@ void solve_equation_by_make_column_elements_zero()
   }
 }
 
-
-
 int main(int argument_count, char *argument_values[])
 {
   if (argument_count > 2)
@@ -220,8 +220,8 @@ int main(int argument_count, char *argument_values[])
 
             matrix_size = 0;
             inserting_equations = 0;
-            if (matrix_values)
-              free(matrix_values);
+            // if (matrix_values)
+            //   free(matrix_values);
 
             printf("\nReset operation\n");
           }
@@ -355,13 +355,14 @@ int main(int argument_count, char *argument_values[])
                       token = strtok(NULL, " ");
                     }
 
-                    if (qtd_buffer_elements != qtd_equations + 1)
+                    if (qtd_buffer_elements > qtd_equations + 1 && qtd_buffer_elements < 1)
                     {
                       printf("Error: Invalid number of elements in the equation.\n");
                       remaining_equations++;
                     }
                     else
-                    { }
+                    {
+                    }
 
                     remaining_equations--;
                   }
@@ -383,7 +384,8 @@ int main(int argument_count, char *argument_values[])
                 if (option == '0')
                   exit(0);
 
-                else if (option == '1') {
+                else if (option == '1')
+                {
                   equations_system_stored++;
                   break;
                 }
@@ -416,7 +418,6 @@ int main(int argument_count, char *argument_values[])
 
   return 0;
 }
-
 
 // https://stackoverflow.com/questions/10874374/passing-a-unknown-size-matrix-reference-to-a-c-function
 // https://www.tutorialspoint.com/cprogramming/c_array_of_pointers.htm
