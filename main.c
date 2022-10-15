@@ -99,38 +99,40 @@ void turn_element_into_zero(float *matrix, int matrix_order, int line_that_just_
   }
 }
 
-// TODO: implement logic to store solutions
-void solve_equation_by_make_column_elements_zero()
+float * solve_equation_by_make_column_elements_zero(float *matrix, int matrix_order)
 {
-  for (int k = 0; k < sizeof(order_and_matrix); k += 2)
+  float *solutions = (float *)malloc(sizeof(float) * matrix_order);
+
+  turn_diagonal_element_into_one(matrix, 0, 0, matrix_order);
+  int line_that_just_implemented_one = 0;
+
+  for (int column = 0; column < matrix_order; column++)
   {
-    int matrix_order = order_and_matrix[k];
-    float *matrix = matrices[order_and_matrix[k + 1]];
-
-    turn_diagonal_element_into_one(matrix, 0, 0, matrix_order);
-    int line_that_just_implemented_one = 0;
-
-    for (int column = 0; column < matrix_order; column++)
+    for (int line = 0; line < matrix_order; line++)
     {
-      for (int line = 0; line < matrix_order; line++)
+      if (line != column)
       {
-        if (line != column)
+        float current_number = matrix[line * (matrix_order + 1) + column];
+        if (current_number != 0.0)
         {
-          float current_number = matrix[line * (matrix_order + 1) + column];
-          if (current_number != 0.0)
+          turn_element_into_zero(matrix, matrix_order, line_that_just_implemented_one, line, (current_number * -1.0));
+          if (matrix[line * (matrix_order + 1) + line] != 1.0)
           {
-            turn_element_into_zero(matrix, matrix_order, line_that_just_implemented_one, line, (current_number * -1.0));
-            if (matrix[line * (matrix_order + 1) + line] != 1.0)
-            {
-              // if we make the element of row N zero, the diagonal NxN becomes one
-              turn_diagonal_element_into_one(matrix, line, line, matrix_order);
-              line_that_just_implemented_one = line;
-            }
+            // if we make the element of row N zero, the diagonal NxN becomes one
+            turn_diagonal_element_into_one(matrix, line, line, matrix_order);
+            line_that_just_implemented_one = line;
           }
         }
       }
     }
   }
+
+  for (int i = 0; i < matrix_order; i++)
+  {
+    solutions[i] = matrix[i * (matrix_order + 1) + matrix_order];
+  }
+
+  return solutions;
 }
 
 int main(int argument_count, char *argument_values[])
@@ -166,6 +168,8 @@ int main(int argument_count, char *argument_values[])
       }
       else
       {
+        menu();
+
         char line[256];
         size_t length = 0;
         float *matrix_values;
@@ -262,7 +266,21 @@ int main(int argument_count, char *argument_values[])
         }
 
         fclose(file);
-      }
+        
+        for (int k = 0; k < sizeof(order_and_matrix); k += 2)
+        {
+          int matrix_order = order_and_matrix[k];
+          float *matrix = matrices[order_and_matrix[k + 1]];
+
+          print_matrix(matrix, matrix_order);
+          float *solutions = solve_equation_by_make_column_elements_zero(matrix, matrix_order);
+
+          printf("Solutions: ");
+          for (int i = 0; i < matrix_order; i++)
+          {
+            printf("%f ", solutions[i]);
+          }
+        }
     }
     else
     {
