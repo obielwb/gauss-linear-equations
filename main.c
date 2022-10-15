@@ -12,11 +12,10 @@ typedef enum
   true
 } boolean;
 
-float *matrices[MAXIMUM];
+float **matrices = malloc(MAXIMUM * sizeof(float *));
 int matrices_current_position = 0;
 
 int order_and_matrix[MAXIMUM * 2] = {};
-// float solutions[MAXIMUM] = {};
 
 void menu()
 {
@@ -29,14 +28,6 @@ void menu()
       "|       |_______||___._|_____|_____|_____|        |\n"
       "|                                                 |\n"
       "|-------------------------------------------------|\n\n");
-}
-
-void pause()
-{
-  printf("Press enter to continue...");
-  while ((getchar()) != '\n')
-    ;
-  getchar();
 }
 
 boolean equal_results_between_pairs_of_lines(float *matrix, int matrix_order)
@@ -136,6 +127,14 @@ float * solve_equation_by_make_column_elements_zero(float *matrix, int matrix_or
   return solutions;
 }
 
+void free_pointers_array(float** pointers_array, int size) {
+  for (int i = 0; i < size; i++) {
+    free(pointers_array[i]);
+  }
+
+  free(pointers_array);
+}
+
 int main(int argument_count, char *argument_values[])
 {
   if (argument_count > 2)
@@ -172,11 +171,12 @@ int main(int argument_count, char *argument_values[])
         menu();
 
         char line[256];
-        size_t length = 0;
+
         float *matrix_values;
         int matrix_values_atual_position = 0;
-        boolean inserting_equations = false; // false
         int matrix_size;
+
+        boolean inserting_equations = false; 
 
         while (fgets(line, sizeof(line), file) != NULL)
         {
@@ -185,13 +185,13 @@ int main(int argument_count, char *argument_values[])
 
           int qtd_line_elements = 0;
 
-          char *token = strtok(line, " ");
+          char *element = strtok(line, " ");
 
-          while (token != NULL)
+          while (element != NULL)
           {
-            if (isspace(*token) == 0)
+            if (isspace(*element) == 0)
               qtd_line_elements++;
-            token = strtok(NULL, " ");
+            element = strtok(NULL, " ");
           }
 
           printf("elements %d\n", qtd_line_elements);
@@ -221,8 +221,6 @@ int main(int argument_count, char *argument_values[])
 
             matrix_size = 0;
             inserting_equations = 0;
-            // if (matrix_values)
-            //   free(matrix_values);
 
             printf("\nReset operation\n");
           }
@@ -266,7 +264,6 @@ int main(int argument_count, char *argument_values[])
           }
         }
 
-        fclose(file);
         
         /*for (int k = 0; k < sizeof(order_and_matrix); k += 2)
         {
@@ -282,6 +279,10 @@ int main(int argument_count, char *argument_values[])
             printf("%f ", solutions[i]);
           }
         }*/
+
+        fclose(file);
+
+        free_pointers_array(matrices, MAXIMUM);
       }
     }
     else
@@ -293,11 +294,3 @@ int main(int argument_count, char *argument_values[])
 
   return 0;
 }
-
-// https://stackoverflow.com/questions/10874374/passing-a-unknown-size-matrix-reference-to-a-c-function
-// https://www.tutorialspoint.com/cprogramming/c_array_of_pointers.htm
-// https://www.geeksforgeeks.org/find-all-pairs-possible-from-the-given-array/
-
-// ------------- exist_zeros_in_main_diagonal() -------------
-// https://cs.stackexchange.com/questions/58096/permutation-on-matrix-to-fill-main-diagonal-with-non-zero-values
-// https://www.geeksforgeeks.org/maximum-bipartite-matching/
