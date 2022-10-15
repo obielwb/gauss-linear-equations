@@ -22,12 +22,13 @@ void menu()
 {
   system("clear");
   printf(
-      "_______\n"
-      "|     __|.---.-.--.--.-----.-----.\n"
-      "|    |  ||  _  |  |  |__ --|__ --|\n"
-      "|_______||___._|_____|_____|_____|\n\n");
-  printf("0 - Exit\n");
-  printf("1 - Type in equations system\n\n");
+      "|-------------------------------------------------|\n"
+      "|       _______                                   |\n"
+      "|       |     __|.---.-.--.--.-----.-----.        |\n"
+      "|       |    |  ||  _  |  |  |__ --|__ --|        |\n"
+      "|       |_______||___._|_____|_____|_____|        |\n"
+      "|                                                 |\n"
+      "|-------------------------------------------------|\n\n");
 }
 
 void pause()
@@ -267,7 +268,7 @@ int main(int argument_count, char *argument_values[])
 
         fclose(file);
         
-        for (int k = 0; k < sizeof(order_and_matrix); k += 2)
+        /*for (int k = 0; k < sizeof(order_and_matrix); k += 2)
         {
           int matrix_order = order_and_matrix[k];
           float *matrix = matrices[order_and_matrix[k + 1]];
@@ -280,7 +281,8 @@ int main(int argument_count, char *argument_values[])
           {
             printf("%f ", solutions[i]);
           }
-        }
+        }*/
+      }
     }
     else
     {
