@@ -202,7 +202,7 @@ boolean remove_main_diagonal_zeros(float *matrix, int matrix_order)
   if (equal_elements == matrix_order * matrix_order)
   {
     return false;
-  };
+  }
 
   for (int i = 0; i < matrix_order; i++)
   {
@@ -394,6 +394,15 @@ int main(int argument_count, char *argument_values[])
               if (equal_results_between_pairs_of_lines(matrix_values,
                                                        matrix_size) == false)
               {
+                for (int i = 0; i < matrix_size; i++)
+                {
+                  for (int j = 0; j < matrix_size + 1; j++)
+                  {
+                    printf("%.0f ", matrix_values[i * (matrix_size + 1) + j]);
+                  }
+                  printf("\n");
+                }
+
                 matrices[matrices_current_position] = matrix_values;
 
                 // vector of pairs -> order and matrix position in matrices
