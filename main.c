@@ -285,9 +285,14 @@ int main(int argument_count, char *argument_values[]) {
 
           char *element = strtok(line, " ");
 
+          // TODO: count elements while also pushing them into the array
+          printf("\n> Elements: ");
+
           while (element != NULL) {
             if (isspace(*element) == 0)
               line_elements_count++;
+            printf("%c ", *element);
+
             element = strtok(NULL, " ");
           }
 
