@@ -8,7 +8,7 @@
 
 typedef enum { false, true } boolean;
 
-float **matrices = malloc(MAXIMUM * sizeof(float *));
+float **matrices;
 int matrices_current_position = 0;
 
 int order_and_matrix[MAXIMUM * 2] = {};
@@ -159,6 +159,8 @@ int main(int argument_count, char *argument_values[]) {
 
         char line[256];
 
+        matrices = malloc(512 * sizeof(float *));
+
         float *matrix_values;
         int matrix_values_current_position = 0;
         int matrix_size;
@@ -190,18 +192,18 @@ int main(int argument_count, char *argument_values[]) {
               printf("%f ", matrix_values[i]);
             }
 
-            /*
-            if (main_diagonal_has_zeros(matrix_values))
+            
+            if (main_diagonal_has_zeros(matrix_values)) {
               if (equal_results_between_pairs_of_lines(matrix_values,
-            matrix_size) == false) { matrices[matrices_current_position] =
-            matrix_values; matrices_current_position++;
+                matrix_size) == false) { matrices[matrices_current_position] =
+                matrix_values; matrices_current_position++;
 
-                // vector of pairs -> order and matrix position in matrices
-            array order_and_matrix[matrices_current_position] = matrix_size;
+                  // vector of pairs -> order and matrix position in matrices array 
+                order_and_matrix[matrices_current_position] = matrix_size;
                 order_and_matrix[matrices_current_position + 1] =
-            matrices_current_position;
+                matrices_current_position;
               }
-            */
+            }
 
             matrix_size = 0;
             inserting_equations = 0;
@@ -240,12 +242,12 @@ int main(int argument_count, char *argument_values[]) {
           }
         }
 
-        /*for (int k = 0; k < sizeof(order_and_matrix); k += 2)
+        for (int k = 0; k < sizeof(order_and_matrix); k += 2)
         {
           int matrix_order = order_and_matrix[k];
           float *matrix = matrices[order_and_matrix[k + 1]];
 
-          print_matrix(matrix, matrix_order);
+          //print_matrix(matrix, matrix_order); criar função para printar matriz
           float *solutions =
         solve_equation_by_making_column_elements_zero(matrix, matrix_order);
 
@@ -254,7 +256,7 @@ int main(int argument_count, char *argument_values[]) {
           {
             printf("%f ", solutions[i]);
           }
-        }*/
+        }
 
         fclose(file);
 
