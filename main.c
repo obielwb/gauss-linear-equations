@@ -79,11 +79,11 @@ void swap(int *a, int *b)
   *b = t;
 }
 
-boolean has_zeros_in_diagonal(int *matrix, int matrix_order)
+boolean has_zeros_in_diagonal(float *matrix, int matrix_order)
 {
   for (int i = 0; i < matrix_order; i++)
   {
-    if (matrix[i * matrix_order + i] == 0)
+    if (matrix[i * matrix_order + i] == 0.0)
     {
       return true;
     }
@@ -92,11 +92,11 @@ boolean has_zeros_in_diagonal(int *matrix, int matrix_order)
   return false;
 }
 
-int *arrange_matrix_from_permutation(int *matrix, int *permutation,
+float *arrange_matrix_from_permutation(float *matrix, int *permutation,
                                      int matrix_order)
 {
-  int *arranged_matrix =
-      (int *)malloc(matrix_order * matrix_order * sizeof(int));
+  float *arranged_matrix =
+      (float *)malloc(matrix_order * matrix_order * sizeof(float));
 
   // rows arrangement
   for (int i = 0; i < matrix_order; i++)
@@ -132,12 +132,12 @@ int *arrange_matrix_from_permutation(int *matrix, int *permutation,
 }
 
 void permutate(int indexes[], int start, int end, int matrix_order,
-               int matrix[matrix_order][matrix_order])
+               float matrix[matrix_order][matrix_order])
 {
   if (start == end)
   {
-    int *arranged_matrix =
-        arrange_matrix_from_permutation((int *)matrix, indexes, matrix_order);
+    float *arranged_matrix =
+        arrange_matrix_from_permutation((float *)matrix, indexes, matrix_order);
 
     if (arranged_matrix != 0)
     {
@@ -162,7 +162,7 @@ void permutate(int indexes[], int start, int end, int matrix_order,
 
 boolean remove_main_diagonal_zeros(float *matrix, int matrix_order)
 {
-  if (has_zeros_in_diagonal((int *)matrix, matrix_order) == false)
+  if (has_zeros_in_diagonal((float *)matrix, matrix_order) == false)
   {
     return true;
   }
@@ -173,8 +173,8 @@ boolean remove_main_diagonal_zeros(float *matrix, int matrix_order)
     indexes[i] = i;
   }
 
-  int *matrix_without_zeros =
-      (int *)malloc(matrix_order * matrix_order * sizeof(int));
+  float *matrix_without_zeros =
+      (float *)malloc(matrix_order * matrix_order * sizeof(int));
 
   for (int i = 0; i < matrix_order; i++)
   {
@@ -370,7 +370,7 @@ int main(int argument_count, char *argument_values[])
             if (isspace(*element) == 0)
             {
               elements[line_elements_count++] = atof(element);
-              // printf("%f ", atof(element));
+              printf("%f ", atof(element));
             }
 
             element = strtok(NULL, " ");
