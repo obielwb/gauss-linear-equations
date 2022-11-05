@@ -17,9 +17,12 @@ int matrices_current_position = 0;
 
 int order_and_matrix[MAXIMUM * 2] = {};
 
+// logic var to control recursive function calls
+boolean found_matrix_without_zeros = false;
+
 void menu()
 {
-  system("clear");
+  int _ = system("clear");
   printf("|-------------------------------------------------|\n"
          "|       _______                                   |\n"
          "|       |     __|.---.-.--.--.-----.-----.        |\n"
@@ -156,25 +159,23 @@ void permutate(int indexes[], int start, int end, int matrix_order,
   if (start == end)
   {
     float *arranged_matrix =
-        arrange_matrix_from_permutation((float *)matrix, indexes, matrix_order);
+        arrange_matrix_from_permutation(matrix, indexes, matrix_order);
 
-    if (arranged_matrix != 0)
+    if (arranged_matrix != 0 && found_matrix_without_zeros == false)
     {
+      found_matrix_without_zeros = true;
+
       for (int i = 0; i < matrix_order; i++)
       {
         for (int j = 0; j < matrix_order + 1; j++)
         {
-          // matrix[i * (matrix_order + 1) + j] =
-              // arranged_matrix[i * (matrix_order + 1) + j];
-
-          printf("%.0f ", arranged_matrix[i * (matrix_order + 1) + j]);
+          matrix[i * (matrix_order + 1) + j] =
+              arranged_matrix[i * (matrix_order + 1) + j];
         }
-
-        printf("\n");
       }
-
-      return;
     }
+
+    return;
   }
 
   for (int i = start; i <= end; i++)
@@ -210,40 +211,36 @@ boolean remove_main_diagonal_zeros(float *matrix, int matrix_order)
     }
   }
 
+  found_matrix_without_zeros = false;
   permutate(indexes, 0, matrix_order - 1, matrix_order, matrix_without_zeros);
 
-  // int equal_elements = 0;
-  // for (int i = 0; i < matrix_order; i++)
-  // {
-  //   for (int j = 0; j < matrix_order + 1; j++)
-  //   {
-  //     if (matrix_without_zeros[i * (matrix_order + 1) + j] ==
-  //         matrix[i * (matrix_order + 1) + j])
-  //     {
-  //       equal_elements++;
-  //     }
-  //   }
-  // }
+  int equal_elements = 0;
+  for (int i = 0; i < matrix_order; i++)
+  {
+    for (int j = 0; j < matrix_order + 1; j++)
+    {
+      if (matrix_without_zeros[i * (matrix_order + 1) + j] ==
+          matrix[i * (matrix_order + 1) + j])
+      {
+        equal_elements++;
+      }
+    }
+  }
 
-  // if (equal_elements == matrix_order * matrix_order)
-  // {
-  //   return false;
-  // }
+  if (equal_elements == matrix_order * (matrix_order + 1))
+  {
+    return false;
+  }
 
   for (int i = 0; i < matrix_order; i++)
   {
     for (int j = 0; j < matrix_order + 1; j++)
     {
-      // matrix[i * (matrix_order + 1) + j] = matrix_without_zeros[i * (matrix_order + 1) + j];
-
-      printf("%.0f ", matrix_without_zeros[i * (matrix_order + 1) + j]);
+      matrix[i * (matrix_order + 1) + j] = matrix_without_zeros[i * (matrix_order + 1) + j];
     }
-
-    printf("\n");
   }
 
-  // return true;
-  return false;
+  return true;
 }
 
 // matrix_order + 1 because the matrix has the results in the last column
@@ -372,23 +369,17 @@ int main(int argument_count, char *argument_values[])
 
         while (fgets(line, sizeof(line), file) != NULL)
         {
-          // printf("> Retrieved line of length %zu:\n", strlen(line));
-          // printf("> %s", line);
-
           int line_elements_count = 0;
 
           char *element = strtok(line, " ");
 
           float *elements = malloc(512 * sizeof(float));
 
-          // printf("\n\nelementsaa ");
-
           while (element != NULL)
           {
             if (isspace(*element) == 0)
             {
               elements[line_elements_count++] = atof(element);
-              // printf("%f ", atof(element));
             }
 
             element = strtok(NULL, " ");
@@ -396,43 +387,11 @@ int main(int argument_count, char *argument_values[])
 
           if (line_elements_count < 1)
           {
-            // debug
-            // printf("size: %d\n", matrix_size);
-            // printf("values: %d\n", matrix_values_current_position);
-            // printf("first: %f\n", matrix_values[0]);
-            // for (int i = 0; i < (matrix_size); i++)
-            // {
-            //   printf("%f ", matrix_values[i]);
-            // }
-
-            printf("\nremoving zeros\n");
-
             if (remove_main_diagonal_zeros(matrix_values, matrix_size))
             {
-              printf("\nremoved zeros\n");
-
-              for (int i = 0; i < matrix_size; i++)
-              {
-                for (int j = 0; j < matrix_size + 1; j++)
-                {
-                  printf("%f ", matrix_values[i * (matrix_size + 1) + j]);
-                }
-
-                printf("\n");
-              }
-
               if (equal_results_between_pairs_of_lines(matrix_values,
                                                        matrix_size) == false)
               {
-                // for (int i = 0; i < matrix_size; i++)
-                // {
-                //   for (int j = 0; j < matrix_size + 1; j++)
-                //   {
-                //     printf("%.0f ", matrix_values[i * (matrix_size + 1) + j]);
-                //   }
-                //   printf("\n");
-                // }
-
                 matrices[matrices_current_position] = matrix_values;
 
                 // vector of pairs -> order and matrix position in matrices
@@ -447,8 +406,6 @@ int main(int argument_count, char *argument_values[])
 
             matrix_size = 0;
             inserting_equations = 0;
-
-            // printf("\nReset operation\n");
           }
           else if (matrix_size > 0)
           {
@@ -481,58 +438,45 @@ int main(int argument_count, char *argument_values[])
 
         for (int k = 0; k < sizeof(order_and_matrix); k += 2)
         {
-          // int matrix_order = order_and_matrix[k];
+          int matrix_order = order_and_matrix[k];
 
-          // if (matrix_order != 0)
-          // {
-          //   float *matrix = matrices[order_and_matrix[k + 1]];
+          if (matrix_order != 0)
+          {
+            float *matrix = matrices[order_and_matrix[k + 1]];
 
-          //   printf("System:\n");
-          //   for (int i = 0; i < matrix_order; i++)
-          //   {
-          //     for (int j = 0; j < matrix_order; j++)
-          //     {
-          //       printf("%.2f%c ", matrix[i * (matrix_order + 1) + j], 'a' + j);
+            printf("Rearranged system:\n");
+            for (int i = 0; i < matrix_order; i++)
+            {
+              for (int j = 0; j < matrix_order; j++)
+              {
+                printf("%.2f%c ", matrix[i * (matrix_order + 1) + j], 'a' + j);
 
-          //       if (j < matrix_order - 1)
-          //       {
-          //         printf("+ ");
-          //       }
-          //     }
+                if (j < matrix_order - 1 && matrix[i * (matrix_order + 1) + j + 1] >= 0)
+                {
+                  printf("+ ");
+                }
+              }
 
-          //     printf("= %.2f\n", matrix[i * (matrix_order + 1) + matrix_order]);
-          //   }
+              printf("= %.2f\n", matrix[i * (matrix_order + 1) + matrix_order]);
+            }
 
-          //   float *solutions = solve_equation_by_making_column_elements_zero(matrix, matrix_order);
+            float *solutions = solve_equation_by_making_column_elements_zero(matrix, matrix_order);
 
-          //   printf("\nSolution:\n", k, matrix_order);
+            printf("\nSolution:\n") ;
+            for (int i = 0; i < matrix_order; i++)
+            {
+              printf("%c = %.2f\n", 'a' + i, solutions[i]);
+            }
 
-          //   for (int i = 0; i < matrix_order; i++)
-          //   {
-          //     printf("%c = %f\n", 'a' + i, solutions[i]);
-          //   }
-
-          //   printf("\n");
-          // }
-          // else
-          // {
-          //   break;
-          // }
-
-          // float *matrix = matrices[order_and_matrix[k + 1]];
-          // printf("matrix %d, order: %d\n", k, matrix_order);
-          // print_matrix(matrix, matrix_order);
-          // float *solutions = solve_equation_by_making_column_elements_zero(
-          //     matrix, matrix_order);
-
-          // printf("Solutions: ");
-          // for (int i = 0; i < matrix_order; i++)
-          // {
-          //   printf("%f ", solutions[i]);
-          // }
+            printf("\n");
+          }
+          else
+          {
+            break;
+          }
         }
 
-        // free_pointers_array(matrices, MAXIMUM);
+        free_pointers_array(matrices, MAXIMUM);
       }
     }
     else
